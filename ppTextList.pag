@@ -1,0 +1,296 @@
+VERSION 5.00
+Begin VB.PropertyPage ppTextList 
+   Caption         =   "Text List"
+   ClientHeight    =   3135
+   ClientLeft      =   0
+   ClientTop       =   0
+   ClientWidth     =   3780
+   PaletteMode     =   0  'Halftone
+   ScaleHeight     =   3135
+   ScaleWidth      =   3780
+   Begin VB.Frame Frame1 
+      Caption         =   "Text List"
+      Height          =   2895
+      Left            =   120
+      TabIndex        =   0
+      Top             =   120
+      Width           =   3495
+      Begin VB.PictureBox Picture4 
+         BorderStyle     =   0  'None
+         Height          =   2535
+         Left            =   120
+         ScaleHeight     =   2535
+         ScaleWidth      =   3255
+         TabIndex        =   1
+         Top             =   240
+         Width           =   3255
+         Begin VB.TextBox TxtItemData 
+            Height          =   285
+            Left            =   1440
+            TabIndex        =   8
+            Top             =   360
+            Width           =   1335
+         End
+         Begin VB.ListBox lstItems 
+            Height          =   1815
+            IntegralHeight  =   0   'False
+            Left            =   0
+            TabIndex        =   7
+            Top             =   720
+            Width           =   2775
+         End
+         Begin VB.CommandButton cmdAdd 
+            Appearance      =   0  'Flat
+            Caption         =   "7"
+            BeginProperty Font 
+               Name            =   "Marlett"
+               Size            =   9.75
+               Charset         =   2
+               Weight          =   500
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   315
+            Left            =   2880
+            Picture         =   "ppTextList.pgx":0000
+            TabIndex        =   6
+            Tag             =   "flat"
+            ToolTipText     =   "Add Item"
+            Top             =   360
+            UseMaskColor    =   -1  'True
+            Width           =   315
+         End
+         Begin VB.CommandButton cmdDelete 
+            Appearance      =   0  'Flat
+            Caption         =   "r"
+            Enabled         =   0   'False
+            BeginProperty Font 
+               Name            =   "Marlett"
+               Size            =   9.75
+               Charset         =   2
+               Weight          =   500
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   315
+            Left            =   2880
+            Picture         =   "ppTextList.pgx":038A
+            TabIndex        =   5
+            Tag             =   "flat"
+            ToolTipText     =   "Remove Item"
+            Top             =   840
+            UseMaskColor    =   -1  'True
+            Width           =   315
+         End
+         Begin VB.CommandButton cmdDown 
+            Appearance      =   0  'Flat
+            Caption         =   "6"
+            Enabled         =   0   'False
+            BeginProperty Font 
+               Name            =   "Marlett"
+               Size            =   9.75
+               Charset         =   2
+               Weight          =   500
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   315
+            Left            =   2880
+            Picture         =   "ppTextList.pgx":0714
+            TabIndex        =   4
+            Tag             =   "flat"
+            ToolTipText     =   "Move Down"
+            Top             =   1560
+            UseMaskColor    =   -1  'True
+            Width           =   315
+         End
+         Begin VB.CommandButton cmdUp 
+            Appearance      =   0  'Flat
+            Caption         =   "5"
+            Enabled         =   0   'False
+            BeginProperty Font 
+               Name            =   "Marlett"
+               Size            =   9.75
+               Charset         =   2
+               Weight          =   500
+               Underline       =   0   'False
+               Italic          =   0   'False
+               Strikethrough   =   0   'False
+            EndProperty
+            Height          =   315
+            Left            =   2880
+            Picture         =   "ppTextList.pgx":0A9E
+            TabIndex        =   3
+            Tag             =   "flat"
+            ToolTipText     =   "Move Up"
+            Top             =   1200
+            UseMaskColor    =   -1  'True
+            Width           =   315
+         End
+         Begin VB.TextBox TxtNew 
+            Height          =   285
+            Left            =   0
+            TabIndex        =   2
+            Top             =   360
+            Width           =   1335
+         End
+         Begin VB.Label Label2 
+            Caption         =   "Item Data:"
+            Height          =   255
+            Left            =   1440
+            TabIndex        =   10
+            Top             =   120
+            Width           =   1215
+         End
+         Begin VB.Label Label1 
+            Caption         =   "ItemText:"
+            Height          =   255
+            Left            =   0
+            TabIndex        =   9
+            Top             =   120
+            Width           =   1215
+         End
+      End
+   End
+End
+Attribute VB_Name = "ppTextList"
+Attribute VB_GlobalNameSpace = False
+Attribute VB_Creatable = False
+Attribute VB_PredeclaredId = False
+Attribute VB_Exposed = False
+Option Explicit
+'////////////////////////////////////////////////////////
+'///         Property Page for Textual UpDown
+'///                  (ppTextList)
+'///_____________________________________________________
+'/// Textual updown box Property page.
+'/// Modify Tex List
+'///_____________________________________________________
+'/// Last modification  : Apr/26/2004
+'/// Last modified by   : Jose Reynaldo Chavarria
+'/// Modification reason: Creation
+'/// Author: Jose Reynaldo Chavarria Q. (jchavarria@agrolibano.hn)
+'/// Tested on: Windows XP SP1, Windows 98, Windows NT 4.0 SP6.0
+'/// Agrolibano S.A. de C.V.
+'/// Web Site: http://www.agrolibano.hn/
+'////////////////////////////////////////////////////////
+
+Const SepChar = vbCr
+
+Private Sub cmdAdd_Click()
+    If Len(Trim(TxtNew.Text)) > 0 Then
+        lstItems.AddItem TxtNew.Text & vbTab & TxtItemData.Text
+        SaveValueList lstItems
+        TxtNew.Text = ""
+        TxtItemData.Text = ""
+    Else
+        Beep
+    End If
+End Sub
+
+Private Sub cmdDelete_Click()
+  If lstItems.ListIndex > -1 Then
+    If MsgBox("Delete '" & lstItems.Text & "'?", vbQuestion + vbYesNo) = vbYes Then
+      lstItems.RemoveItem lstItems.ListIndex
+      SaveValueList lstItems
+    End If
+  End If
+End Sub
+
+Private Sub cmdUp_Click()
+  On Error Resume Next
+  Dim nItem As Integer
+
+  With lstItems
+    If .ListIndex < 0 Then Exit Sub
+    nItem = .ListIndex
+    If nItem = 0 Then Exit Sub  'can't move 1st item up
+    'move item up
+    .AddItem .Text, nItem - 1
+    'remove old item
+    .RemoveItem nItem + 1
+    'select the item that was just moved
+    .Selected(nItem - 1) = True
+  End With
+
+  SaveValueList lstItems
+End Sub
+
+Private Sub cmdDown_Click()
+  On Error Resume Next
+  Dim nItem As Integer
+
+  With lstItems
+    If .ListIndex < 0 Then Exit Sub
+    nItem = .ListIndex
+    If nItem = .ListCount - 1 Then Exit Sub 'can't move last item down
+    'move item down
+    .AddItem .Text, nItem + 2
+    'remove old item
+    .RemoveItem nItem
+    'select the item that was just moved
+    .Selected(nItem + 1) = True
+  End With
+
+  SaveValueList lstItems
+End Sub
+
+'Private Sub Command1_Click()
+'    LoadValueList TxtList.Text, LstLoad
+'End Sub
+
+Private Sub lstItems_Click()
+  SetListButtons
+End Sub
+
+Private Sub SetListButtons()
+  Dim i As Integer
+  i = lstItems.ListIndex
+  'set the state of the move buttons
+  cmdUp.Enabled = (i > 0)
+  cmdDown.Enabled = ((i > -1) And (i < (lstItems.ListCount - 1)))
+  cmdDelete.Enabled = (i > -1)
+End Sub
+
+Private Sub SaveValueList(cList As ListBox)
+    Dim i As Integer
+    Dim listValue As String
+
+    listValue = ""
+    For i = 0 To cList.ListCount - 1
+        listValue = listValue & cList.List(i) & SepChar
+    Next 'i
+
+    If cList.ListCount > 0 Then
+        listValue = Left(listValue, Len(listValue) - 1)
+    End If
+    cList.Tag = listValue
+    Changed = True
+End Sub
+
+Private Sub LoadValueList(Values As String, cList As ListBox)
+    Dim vlist() As String
+    Dim i As Integer
+
+    vlist = Split(Values, SepChar)
+    cList.Clear
+    For i = 0 To UBound(vlist)
+        cList.AddItem vlist(i)
+    Next 'i
+    If cList.ListCount > 0 Then
+        cList.ListIndex = 0
+    Else
+        lstItems_Click
+    End If
+End Sub
+
+Private Sub PropertyPage_ApplyChanges()
+    SelectedControls(0).List = lstItems.Tag
+End Sub
+
+Private Sub PropertyPage_SelectionChanged()
+    LoadValueList SelectedControls(0).List, lstItems
+End Sub
